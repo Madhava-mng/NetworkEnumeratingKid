@@ -1,0 +1,1043 @@
+#!/bin/python3
+# network Enumerating tool
+
+import requests
+from threading import Thread
+from sys import argv
+import time
+import os
+import threading
+import signal
+
+# Names
+NAME = "n3tool"
+URL = ''
+ErrNo = 0
+Help = ''
+Out_file = f"{time.strftime('%b%d_%H%M%S')}"
+time_ev = 0.05
+Subdomain_enum = False
+Uri_enm = False
+Spidering = False
+Spidering_all = False
+Pinging = False
+Method_deduct = False
+Out_put = False
+No_color = False
+Quiet = False
+
+# Colors
+R="\u001b[31m"
+Y="\u001b[33m"
+G="\u001b[32m"
+N="\u001b[0m"
+P="\u001b[35m"
+B="\u001b[34m"
+W="\u001b[1m"
+S="\u001b[36m"
+U="\u001b[4m"
+
+# Wordlists  (common)
+wordlist = [
+        "contact",
+        "help",
+        "support",
+        "contacts",
+        "fundingchoicesmessages",
+        "alt3.aspmx.l",
+        "stun.l",
+        "cloud",
+        "appengine",
+        "adssettings",
+        "alt7-mtalk",
+        "toolbarqueries",
+        "contacts",
+        "clients1",
+        "alt2-mtalk",
+        "console.cloud",
+        "aa",
+        "play",
+        "android-safebrowsing",
+        "alt6-mtalk",
+        "people-pa.clients6",
+        "hangouts",
+        "shopping",
+        "whois",
+        "addons-pa.clients6",
+        "clients3",
+        "policies",
+        "mail",
+        "alkalicore-pa.clients6",
+        "drive",
+        "pay",
+        "18.client-channel",
+        "dns",
+        "m",
+        "clients6",
+        "ogs",
+        "get",
+        "aspmx.l",
+        "fonts",
+        "clients4",
+        "trends",
+        "apis",
+        "20.client-channel",
+        "feedproxy",
+        "alt2.aspmx.l",
+        "alt7.mobile-gtalk.l",
+        "gg",
+        "11.client-channel",
+        "feedburner",
+        "time1",
+        "time",
+        "adservice",
+        "images",
+        "khms3",
+        "id",
+        "assignments",
+        "search",
+        "plus",
+        "lh3",
+        "picasaweb",
+        "translate",
+        "28.client-channel",
+        "design",
+        "safebrowsing",
+        "cse",
+        "6.client-channel",
+        "alt4.aspmx.l",
+        "14.client-channel",
+        "photos",
+        "encrypted",
+        "cello.client-channel",
+        "alt1-mtalk",
+        "dl",
+        "chat-pa.clients6",
+        "clients5",
+        "suggestqueries",
+        "fcmatch",
+        "0.client-channel",
+        "sandbox",
+        "goto",
+        "blobcomments-pa.clients6",
+        "alt1.aspmx.l",
+        "assistant",
+        "signaler-pa.clients6",
+        "chrome",
+        "alt3-mtalk",
+        "consent",
+        "7.client-channel",
+        "history",
+        "myaccount",
+        "mail-ads",
+        "merchants",
+        "clients2",
+        "clients2",
+        "mtalk",
+        "accounts",
+        "mts0",
+        "time4",
+        "scholar",
+        "docs",
+        "android.clients",
+        "artsandculture",
+        "hangouts.clients6"
+        ]
+wordlist_dir = [
+        ".ssh",
+        "bin",
+        "admine",
+        "contact",
+        "contacts",
+        "upload-photo",
+        "upload-video",
+        "uploaded_img_x",
+        "uploads_event",
+        "uploads_forum",
+        "upmenuoptions",
+        "php-inc",
+        "php-sdk",
+        "phpESP",
+        "phpMy",
+        "php_files",
+        "php_test",
+        "phpcache",
+        "phpcaptcha",
+        "phpcart",
+        "phpcode",
+        "phpdoc",
+        "phpedit",
+        "phpformgen",
+        "phpids",
+        "phpinclude",
+        "phpjobscheduler",
+        "phpld",
+        "phpmychat",
+        "phpmysql",
+        "phpodp",
+        "phprojekt",
+        "phpsecinfo",
+        "phptell",
+        "phpweather",
+        "admin",
+        "administrator",
+        "wp-admin",
+        "admincp",
+        "fileadmin",
+        "phpmyadmin",
+        "administration",
+        "_admin",
+        "siteadmin",
+        "admin_c",
+        "admin2",
+        "webadmin",
+        "myadmin",
+        "vsadmin",
+        "shopadmin",
+        "dbadmin",
+        "phpadmin",
+        "wbsadmin",
+        "e107_admin",
+        "admins",
+        "adminpanel",
+        "administracion",
+        "sohoadmin",
+        "admin1",
+        "sysadmin",
+        "newadmin",
+        "adminsite",
+        "mfr_admin",
+        "admintemplates",
+        "mysqladmin",
+        "administracja",
+        "cmsadmin",
+        "site_admin",
+        "storeadmin",
+        "superadmin",
+        "backadmin",
+        "sqladmin",
+        "tiki-admin",
+        "administrador",
+        "admintools",
+        "useradmin",
+        "sadmin",
+        "admin_area",
+        "admini",
+        "admin3",
+        "helpadmin",
+        "adminarea",
+        "epsadmin",
+        "cadmin",
+        "admin_new",
+        "admina",
+        "adminm",
+        "adminpages",
+        "uploads_admin",
+        "acs-admin",
+        "admin_",
+        "admin_old",
+        "adminlogin",
+        "adminv2",
+        "admin_images",
+        "administrators",
+        "mliveadmin",
+        "newsadmin",
+        "rap_admin",
+        "xadmin",
+        "adminka",
+        "blogadmin",
+        "oneadmin",
+        "phpldapadmin",
+        "phpmyadmin2",
+        "radmin",
+        "_admin_",
+        "adminonline",
+        "admintool",
+        "adminweb",
+        "bvadmin",
+        "cowadmin",
+        "linkadmin",
+        "vadmin",
+        "wbadmin",
+        "web_admin",
+        "xcache-admin",
+        "zadmin",
+        "admin_login",
+        "admin_tools",
+        "administrare",
+        "adminx",
+        "ccadmin",
+        "cjadmin",
+        "iadmin",
+        "postfixadmin",
+        "site-admin",
+        "admin-login",
+        "admin_test",
+        "adminonly",
+        "bmadmin",
+        "clientadmin",
+        "cms_admin",
+        "kadmin",
+        "newsletteradmin",
+        "padmin",
+        "wsadmin",
+        "_phpmyadmin",
+        "_vti_admin",
+        "actions_admin",
+        "admin2009",
+        "admin_files",
+        "admin_menu",
+        "adminis",
+        "adminold",
+        "dadmin",
+        "bb-admin",
+        "iredadmin",
+        "metaadmin",
+        "my_admin",
+        "myphpadmin",
+        "new_admin",
+        "pb-admin",
+        "portaladmin",
+        "qmailadmin",
+        "admin12",
+        "admin123",
+        "admin_cms",
+        "admin_cp",
+        "admin_custom",
+        "admin_media",
+        "admin_navigation",
+        "admin_panel",
+        "administratie",
+        "adminz",
+        "badmin",
+        "banneradmin",
+        "cpadmin",
+        "e-admin",
+        "fzadmin",
+        "modules_admin",
+        "nadmin",
+        "viatoradmin",
+        "secureadmin",
+        "web-admin",
+        "__admin",
+        "_administration",
+        "_dbadmin",
+        "admin-old",
+        "admin-panel",
+        "admin00",
+        "admin_common",
+        "admin_news",
+        "admin_scripts",
+        "admin_site",
+        "admin_user",
+        "admincenter",
+        "admincms",
+        "adminfiles",
+        "administer",
+        "administracao",
+        "administrace",
+        "administrasjon",
+        "administrative",
+        "adminmaster",
+        "adminn",
+        "appadmin",
+        "aspnet_webadmin",
+        "authadmin",
+        "contentadmin",
+        "db_admin",
+        "diradmin",
+        "htadmin",
+        "iisadmin",
+        "my-admin",
+        "pbmadmin",
+        "phpmyadmin3",
+        "pmadmin",
+        "sspadmin",
+        "sswadmin",
+        "surveyadmin",
+        "systemadmin",
+        "uadmin",
+        "wadmin",
+        "wp_admin",
+        "yahoo_site_admin",
+        "~admin",
+        "Webadmin",
+        "_siteadmin",
+        "adadmin",
+        "admin4",
+        "admin888",
+        "admin_101",
+        "admin_templates",
+        "admin_tool",
+        "admin_users",
+        "admin_web",
+        "adminbereich",
+        "admincpanel",
+        "admindemo",
+        "adminer",
+        "adminforum",
+        "administra",
+        "administracija",
+        "adminlinks",
+        "adminnorthface",
+        "adminpp",
+        "adminstaff",
+        "adminuser",
+        "adminzone",
+        "app_admin",
+        "cgi-admin",
+        "cimjobpostadmin",
+        "client_admin",
+        "cms-admin",
+        "comadmin",
+        "cs-admin",
+        "db-admin",
+        "doadmin",
+        "enteradmin",
+        "formsadmin",
+        "images_admin",
+        "ladmin",
+        "mailadmin",
+        "mainadmin",
+        "masteradmin",
+        "mh_admin",
+        "mysql-admin",
+        "mysql_admin",
+        "pgadmin",
+        "content_admin",
+        "seoadmin",
+        "shop_admin",
+        "pcadmin",
+        "tttadmin",
+        "sign_out",
+        "sign_up",
+        "signage",
+        "signon",
+        "urdu",
+        "urology",
+        "urp",
+        "urs",
+        "urun",
+        "uscan",
+        "used-inventory",
+        "usedcars",
+        "user-account",
+        "user-controls",
+        "userAdmin",
+        "userControl",
+        "userImages",
+        "userLogin",
+        "user_admin",
+        "user_content",
+        "user_info",
+        "user_media",
+        "user_profile",
+        "userarea",
+        "usercontent",
+        "userimg",
+        "userinterface",
+        "userlist",
+        "userlogin",
+        "userphotos",
+        "contact_request",
+        "flair",
+        "recover_password",
+        "users_files",
+        "usersonline",
+        "userspace",
+
+        ]
+
+
+
+# Help statement
+HELP=f"""{W}{U}N3tool{N} (Network Enumetaing Toolkid)
+
+{W}{U}Usage{N}: {NAME} [arg] <target>
+
+{W}{U}Arguments{N}:
+
+ -d   --dirs                   Files and directory enumeration [Broutforcing]
+                               {S}{NAME} --dirs https://demo.com/ -w wl.txt{N}
+ -e   --sub-domain             Subdomain enumeration           [Broutforcing]
+                               {S}{NAME} --sub-domain target.com -w wl.txt{N}
+ -m   --method                 Scan for alowed methods
+ -c   --check                  Print status of the target
+ -o   --output                 Dump output to the file
+ -s   --spider                 Spidering for header
+ -S   --spider-all             Spidering for header and get body to
+                               output file
+ -w   --wordlist  <WORDLIST>   Specify wordlist to broutforce
+ -t   --time      <SECONDS>    pause the scaning time (Denote by seconds) FW-evation 
+                               {S}{NAME} --dirs --time 0.5 https://demo.com{N}
+                               pause the scanning for every 1/2 second
+      --no-color               Ignore colors
+      --quiet                  Start without banner, and don't show status.
+ 
+
+{W}{U}Examples{N}: 
+
+directory Enumeration:
+    {NAME} --dirs --wordlist wordlist.txt https://example.com/
+
+sub-domain Enumeration:
+    {NAME} --sub-domain --wordlist wordlist.txt example.com
+"""
+HELP_oneline = f"""{G}Usage{N}:   {NAME} [arg] <target>\nuse '--help' for more info."""
+
+
+
+# Argumenst_taken
+tmp_list = []
+arg_list =[
+        '-e', '--sub-domain',
+        '-w', '--wordlist',
+        '-d', '--dirs',
+        '-s', '--spider',
+        '-S', '--spider-all',
+        '-c', '--check',
+        '-m', '--method',
+        '-h', '--help',
+        '-o', '--output',
+        '-t', '--time',
+              '--no-color',
+              '--quiet'
+        ]
+tmp_list.append(argv[0])
+for i in range(len(argv)):
+    if argv[i][0] == '-':
+        if argv[i] in arg_list:
+            if argv[i] in ("-e","--sub-domain"):
+                Subdomain_enum = True
+                tmp_list.append(argv[i])
+            elif argv[i] in ("-w","--wordlist"):
+                try:
+                    _tmp_file = argv[i+1]
+                    tmp_list.append(argv[i+1])
+                    tmp_list.append(argv[i])
+                    try:
+                        f = open(_tmp_file,"r")
+                        _tmp_ = f.read()
+                        wordlist = _tmp_.split("\n")
+                        wordlist_dir = wordlist[::]
+                    except:
+                        ErrNo = 2
+                except:
+                    ErrNo = 1
+            elif argv[i] in ("-d", "--dirs"):
+                Uri_enm = True
+                tmp_list.append(argv[i])
+            elif argv[i] in ("-s", "--spider"):
+                Spidering = True
+                tmp_list.append(argv[i])
+            elif argv[i] in ("-S", "--spider-all"):
+                Spidering = True
+                Spidering_all = True
+                tmp_list.append(argv[i])
+            elif argv[i] in ("-h", "--help"):
+                print(HELP)
+                tmp_list.append(argv[i])
+                raise SystemExit
+            elif argv[i] in ("-c", "--check"):
+                Pinging = True
+                tmp_list.append(argv[i])
+            elif argv[i] in ("-m", "--method"):
+                Method_deduct = True
+                tmp_list.append(argv[i])
+            elif argv[i] in ("-o", "--output"):
+                try:
+                    Out_put = True
+                    Out_file = argv[i+1] 
+                    tmp_list.append(argv[i])
+                    tmp_list.append(argv[i+1])
+                except:
+                    ErrNo = 3
+            elif argv[i] in ('-t', '--time'):
+                try:
+                    try:
+                        time_ev = float(argv[i+1])
+                    except:
+                        tmp_invalied = str(argv[i+1])
+                        ErrNo = 5
+                    if time_ev < 0:
+                        ErrNo = 5  # less than 
+                    tmp_list.append(argv[i])
+                    tmp_list.append(argv[i+1])
+                except:
+                    ErrNo = 4  # time not specified
+            elif argv[i] in ('--no-color'):
+                No_color = True
+                tmp_list.append(argv[i])
+            elif argv[i] in ('--quiet'):
+                Quiet = True
+                tmp_list.append(argv[i])
+        else:
+            print(f"[{R}Error{N}][{Y}InvaliedArgument{N}][ {argv[i]} ]")
+            raise SystemExit
+for i in range(len(argv)):
+    if argv[i] not in tmp_list:
+        URL = argv[i]
+
+
+
+# find target 
+if URL == "":
+    if len(argv) == 1:
+        print(f"{HELP_oneline}")
+    else:
+        print(f"[{R}Error{N}][{Y}TargetRequired{N}][ {B}Eg:{N} {NAME} [arg] http://demo.com/{N} ]\n{G}run{N}: '{NAME} --help' for more info. ")
+        ErrNo = 6
+
+# Errors
+def _errors_(ErrNo):
+    if ErrNo == 1:
+        print(f"[{R}Error{N}][{Y}FileNotSpecifyed{N}][ {B}Eg{N}: {NAME} -d http://demo.com {G}-w <Wordlist.txt>{N} ]")
+    if ErrNo == 2:
+        print(f"[{R}Error{N}][{Y}FileNotFound{N}][ {_tmp_file} ]")
+    if ErrNo == 3:
+        print(f"[{R}Error{N}][{Y}FileNotSpecifyed{N}][ {B}Eg{N}: {NAME} -d http://demo.com {G}-o <file_name.txt>{N} ]")
+    if ErrNo == 4:
+        print(f"[{R}Error{N}][{Y}TimeNotSpecified{N}][ {B}Eg{N}: {NAME} -d http://demo.com {G}-t <seconds>{N} ]")
+    if ErrNo == 5:
+        print(f"[{R}Error{N}][{Y}InvaliedSecond{N}][ {tmp_invalied} ]")
+
+
+
+# URL checkout
+if len(URL) > 3:
+    if URL[:4] != 'http':
+        URL='http://'+URL
+    if URL[-1] != "/":
+        URL = URL
+
+
+
+# Percentage
+def percent(count,Length):
+    per = str((count*100)//Length)+"%"
+    return per
+
+# Ignoretion from headder 
+def Ignor_header():
+    _Ignore_ = (
+            'Alt-Svc', 
+            'Set-Cookie', 
+            'expect-ct', 
+            'content-security-policy', 
+            'Content-Security-Policy', 
+            'Timing-Allow-Origin')
+    return _Ignore_
+
+
+# sub-domain-enumeration
+def _url_checker(Itered_url, 
+        contant, 
+        Out_file = Out_file, 
+        Out_put= Out_put, 
+        time_ev = time_ev , 
+        Len_ = len(URL)+16, 
+        No_color = No_color,
+        Quiet = Quiet
+        ):
+    try:
+        contant_=requests.get(f"{Itered_url}")
+        if contant_.status_code != 404:
+            if Out_put:
+                Out_file=open(Out_file, "a")
+                Out_file.write(f"{Itered_url}\n")
+                Out_file.close()
+            if contant_.status_code == 200:
+                if No_color:
+                    C="\u001b[0m"
+                else:
+                    C="\u001b[32;1m"
+            else:
+                if No_color:
+                    C="\u001b[0m"
+                else:
+                    C="\u001b[31;1m"
+            width=int(os.get_terminal_size()[0])+26
+            a =f"[{P}{time.strftime(f'%H:%M:%S')}{N}][{C}{contant_.status_code}{N}]  {G}{Itered_url:<{Len_}}{N} | {S}{contant_.headers['Server'].strip()}{N}"
+            if Quiet:
+                print(f"{G}{Itered_url}{N}")
+            else:
+                if No_color:
+                    print(f"{a:<{width}}      ")
+                else:
+                    print(f"{a:<{width}}            ")
+            contant_.close()
+            return 0
+    except KeyboardInterrupt:
+        exit()
+    except:
+        pass
+
+def _sub_domain(
+        URL = URL, 
+        List_domains = tuple(wordlist), 
+        time_ev = time_ev, 
+        Quiet = Quiet 
+        ):
+    count = 1
+    ids = []
+    a=""
+    LEN = 0
+    if URL[-1] == "/":
+        URL = URL[:len(URL)-1]
+    try:
+        check = requests.get(URL)
+        if check.status_code == 200:
+            _Dict_ = check.headers
+        check.close()
+    except:
+        print(f"[{R}Error{N}][UrlNotFound][ {G}Reason{N}: Unable to ping {Y}{URL}{N} ]")
+        raise SystemExit
+    if Quiet:
+        pass
+    else:    
+        print(f"{sub_enum_banner}\r",end = '')
+        for i in _Dict_:
+            if len(i) > LEN:
+                LEN=len(i)
+        print(f"\t{'-'*47}")
+        for i in _Dict_:
+            if i not in Ignor_header():
+                print(f"\t{W}{i:{LEN}} :{N} {_Dict_[i]}")
+        print(f"\t{'-'*47}\n\n")
+    
+    for i in range(len(URL)):
+        if URL[i] == "/":
+            if URL[i+1] == "/":
+                val1 = URL[:i+2]
+                val2 = URL[i+2:]
+    Len = len(List_domains)
+    Len_ = len(str(Len))
+    for i in List_domains:
+        try:
+            if i != "":
+                url = val1+i.strip()+"."+val2
+                try:
+                    i=Thread(
+                            target = _url_checker,
+                            args = (url,i,)
+                            )
+                    i.start()
+                except:
+                    raise SystemExit
+                try:
+                    _id = i.native_id
+                    ids.append(_id)
+                except:
+                    pass
+                width=int(os.get_terminal_size()[0])-12
+                back_len = f"Time: {time_ev}  Threads: {threading.activeCount():^3} Remaining: {Len-count:^{Len_}} {count:>{Len_}}/{Len:<{Len_}} ]{N}"
+                if Quiet:
+                    pass
+                else:
+                    print(f"{W}[{P}{time.strftime('%H:%M:%S')}{N}{W}][ {percent(count, Len):4}{back_len:>{width}}\r",end="")
+            count+=1
+            time.sleep(time_ev/2)
+        except:
+            raise SystemExit 
+    time.sleep(5)
+    if threading.activeCount() > 3:
+        for i in range(threading.activeCount()+1):
+            time.sleep(0.5)
+        print(f"{a:<{width}}            ")
+        for i in ids:
+            try:
+                os.kill(
+                        i, 
+                        signal.SIGKILL
+                        )
+            except:
+                pass
+    else:
+        print(f"{a:<{width}}            ")
+    exit()
+
+
+
+# Directory enumeration
+def _checking_for_uri(
+        URL, Name, 
+        Out_file = Out_file, 
+        Out_put= Out_put, 
+        No_color = No_color,
+        Quiet = Quiet
+        ):
+    try:
+        a = requests.head(URL)
+        Code = a.status_code
+        Size = a.headers.get("Content-Length")
+        if Code != 404:
+            if Size == None:
+                Size='None'
+            if Code == 200:
+                C=f'{W}{G}'
+            elif Code < 400:
+                C=f'{W}{B}'
+            else:
+                C=f'{W}{R}'
+            if Out_put:
+                if Code < 500:
+                    Out_file = open(Out_file, "a")
+                    Out_file.write(f"{URL}\n")
+                    Out_file.close()
+            if Quiet:
+                print(f"{G}{URL}{N}")
+            else:
+                width=int(os.get_terminal_size()[0])+35
+                A = f"[{P}{time.strftime(f'%H:%M:%S')}{N}][{C}{Code}{N}][{B}Size{N}: {Size:<9}]: {G}{URL}{N}"
+                if No_color:
+                    print(f"{A:<{width}} ")
+                else:
+                    print(f"{A:<{width}}     ")
+            a.close()
+    except:
+        raise SystemExit
+
+def _dir_(
+        URL = URL, 
+        URI = tuple(wordlist_dir), 
+        time_ev = time_ev, 
+        Quiet = Quiet
+        ):
+
+    count = 1
+    URI+="doc/", "icon/", "robote.txt"
+    Len = len(URI)
+    if URL[-1] != "/":
+        URL = URL+"/"
+    try:
+        a = requests.get(URL)
+        _Dict_ = a.headers
+        LEN = 0
+        if Quiet:
+            pass
+        else:
+            print(f"{dir_enum_banner}\r",end='')
+            for i in _Dict_:
+                if len(i) > LEN:
+                    LEN=len(i)
+            print(f"\t{'-'*47}")
+            for i in _Dict_:
+                if i not in Ignor_header():
+                    print(f"\t{W}{i:{LEN}} :{N} {_Dict_[i]}")
+            print(f"\t{'-'*47}\n\n")
+        a.close()
+    except:
+        print(f"[{R}Error{N}][UrlNotFound][ {G}Reason{N}: Unable to ping {Y}{URL}{N} ]")
+        raise SystemExit
+    try:
+        for _uri_ in URI:
+            if _uri_ != "" and _uri_[0] != '#':
+                url = URL+_uri_.strip()
+                _uri__ = Thread(target = _checking_for_uri ,args = (url,_uri_,))
+                _uri__.start()
+                width=int(os.get_terminal_size()[0])-12
+                back_len=f"Time: {time_ev}  Threads: {threading.activeCount():^3} Remaining: {Len-count:^{len(str(Len))}} {count:>{len(str(Len))}}/{Len} ]{N}"
+                if Quiet:
+                    pass
+                else:
+                    print(f"{W}[{P}{time.strftime('%H:%M:%S')}{N}{W}][ {percent(count, Len):4}{back_len:>{width}}\r",end="")
+            count+=1
+            time.sleep(time_ev)
+        a=f""
+        while threading.activeCount() > 1:
+            pass
+        print(f"{a:<{width}}            ")
+    except:
+        raise SystemExit
+
+
+
+
+# Spidering
+def Spider(
+        URL = URL, 
+        Spidering_all = Spidering_all
+        ):
+    try:
+        a = requests.get(URL)
+        _Dict_ = a.headers
+        print(f"[{P}{time.strftime(f'%H:%M:%S')}{N}][{B}GET{N}][{G}{a.status_code}{N}][{Y}{URL}{N}]")
+        LEN = 0
+        for i in _Dict_:
+            if len(i) > LEN:
+                LEN=len(i)
+        print(f"{'-'*48}")
+        for i in _Dict_:
+            if i not in Ignor_header():
+                print(f"{W}{i:{LEN}} :{N} {_Dict_[i]}")
+        print(f"{'-'*48}")
+    except:
+        print(f"[{R}Error{N}][UrlNotFound][ {G}Reason{N}: Unable to ping {Y}{URL}{N} ]")
+        Spidering_all = False
+    try:
+        Tmp_list=[]
+        for i in _Dict_['Set-Cookie'].split(";"):
+            if i not in Tmp_list:
+                print(f"[{G}Cookie-Info{N}] {i}")
+                Tmp_list.append(i)
+    except:
+        pass
+    try:
+        for i in _Dict_['Alt-Svc'].split(";"):
+            print(f"[{G}Alt-Svc{N}]{i}")
+    except:
+        pass
+    try:
+        for i in _Dict_['expect-ct'].split(";"):
+            print(f"[{G}except-ct{N}]{i}")
+    except:
+        pass
+    try:
+        for i in _Dict_['Timing-Allow-Origin'].split(";"):
+            print(f"[{G}Timing-Allow-Origin{N}] {i}")
+    except:
+        pass
+    try:
+        for i in _Dict_['content-security-policy'].split(";"):
+            print(f"[{G}SecurityPolicy{N}] {i}")
+    except:
+        pass
+
+    if Spidering_all:
+        print(f'[{G}Body{N}][ {P}File{N}: {Y}{Out_file}.html{N} ]')
+        f = open(f"{Out_file}.html",'w')
+        f.write(a.text)
+        f.close()
+ 
+
+
+
+# Pinging
+def Ping(URL=URL):
+    try:    
+        a=requests.get(URL)
+        print(f"[{P}{time.strftime(f'%H:%M:%S')}{N}][{B}GET{N}][{G}Success{N}][{S}{a.status_code}{N}][{Y}{URL}{N}]\a")
+        a.close()
+    except:
+        print(f"[{P}{time.strftime(f'%H:%M:%S')}{N}][{B}GET{N}][{R}Failed{N} ][{R}404{N}][{Y}{URL}{N}]")
+
+
+
+
+# Method deduction
+def Method(
+        URL=URL,
+        time_ev = time_ev 
+        ):
+
+    tmp_list = []
+    
+    METHOD = [
+            "GET",
+            "HEAD",
+            "POST",
+            "PUT",
+            "DELETE",
+            "CONNECT",
+            "TRACE",
+            "PATCH",
+            "OPTIONS"
+            ]
+    
+    def check_method(
+            URL, 
+            Method_, 
+            tmp_list = tmp_list 
+            ):
+        
+        try:
+            a=requests.request(
+                    Method_, 
+                    URL )
+            if a.status_code == 200:
+                col = f'{G}{W}'
+                per = "Allowed"
+                tmp_list.append(Method_)
+            else:
+                col = f'{R}'
+                per = "NotAllowed"
+            print(f"[{P}{time.strftime(f'%H:%M:%S')}{N}][{Y}{Method_:^7}{N}][{col}{a.status_code}{N}][{B}{URL}{N}][{col}{per:^10}{N}]")
+        except:
+            print(f"[{R}Error{N}][UrlNotFound][ {G}Reason{N}: Unable to ping {Y}{URL}{N} ]")
+            raise SystemExit
+
+    
+    for i in METHOD:
+        try:
+            time.sleep(time_ev)
+            t = Thread(
+                    target=check_method, 
+                    args=(URL,i,) )
+            t.start()
+        except KeyboardInterrupt:
+            raise SystemExit
+        except:
+            pass
+    while threading.activeCount() != 1:
+        pass  
+    print(f"\n{G}Allowed{N}:",end = "")
+    for i in tmp_list:
+        print(f" {i}",end = "")
+    print(".")
+
+
+
+# No color 
+if No_color:
+    (R, Y, G, N, P, B, W, S) = (
+            "\u001b[0m",
+            "\u001b[0m",
+            "\u001b[0m",
+            "\u001b[0m",
+            "\u001b[0m",
+            "\u001b[0m",
+            "\u001b[1m",
+            "\u001b[0m")
+
+# Banners
+if Quiet:
+    dir_enum_banner = ''
+else:
+    dir_enum_banner = ("\n"*(os.get_terminal_size()[1]-7))+"""
+     888 d8b          .d8888b.
+     888 Y8P         d88P  Y88b
+     888                  .d88P
+ .d88888 888 888d888     8888"  88888b.  888  888 88888b.d88b.
+d88" 888 888 888P"        "Y8b. 888 "88b 888  888 888 "888 "88b
+888  888 888 888     888    888 888  888 888  888 888  888  888
+Y88b 888 888 888     Y88b  d88P 888  888 Y88b 888 888  888  888
+ "Y88888 888 888      "Y8888P"  888  888  "Y88888 888  888  888"""
+if Quiet:
+    sub_enum_banner = ''
+else:
+    sub_enum_banner = ("\n"*(os.get_terminal_size()[1]-10))+"""
+888888888  8888888b.       .d8888b.
+888        888  "Y88b     d88P  Y88b
+888        888    888          .d88P
+8888888b.  888    888         8888"  88888b.  888  888 88888b.d88b.
+     "Y88b 888    888          "Y8b. 888 "88b 888  888 888 "888 "88b
+       888 888    888     888    888 888  888 888  888 888  888  888
+Y88b  d88P 888  .d88P     Y88b  d88P 888  888 Y88b 888 888  888  888
+ "Y8888P"  8888888P"       "Y8888P"  888  888  "Y88888 888  888  888"""
+
+
+
+# start functions
+if ErrNo != 0:
+    _errors_(ErrNo)
+    raise SystemExit
+if Pinging:
+    Ping()
+if Spidering:
+    Spider()
+if Subdomain_enum:
+    _sub_domain()
+if Uri_enm:
+    _dir_()
+if Method_deduct:
+    Method()
