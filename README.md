@@ -7,9 +7,10 @@ Network Enumerating toolkid for subdomain enumeration
 * return in Python3 
 
 
-* sumdomain
-* Directory enumerating
-* Banner Grephy
+* sumdomain Enumeration
+* Directory enumeration
+* Banner Graphy
+* Method deduction
 * Spidering
 
 
