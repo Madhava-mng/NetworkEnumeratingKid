@@ -1,13 +1,16 @@
 #!/bin/python3
 # network Enumerating tool
 
-import requests
 from threading import Thread
 from sys import argv
 import time
 import os
 import threading
 import signal
+try:
+    import requests
+except:
+    print(f"[!] requests not installed.\n Run 'pip3 install requests', After installing 'python3-pip' package manager(apt install python3-pip)")
 
 # Names
 NAME = "n3tool"
@@ -482,6 +485,12 @@ directory Enumeration:
 
 sub-domain Enumeration:
     {NAME} --sub-domain --wordlist wordlist.txt example.com
+----------------------------------------------------------------------------------------
+{W}{U}Author{N}: Madhava     {W}@{N}RED-5-CRACKERS    {W}@{N}Black-widow-z
+{W}{U}Issues{N}: https://github.com/Madhava-mng/NetworkEnumeratingKid/issues
+{W}{U}Contact{N}: https://t.me/BlackWidowzIntrR5c
+If you have any issues Please repote at {W}https://red5cracker.wordpress.com/contact/{N}
+----------------------------------------------------------------------------------------
 """
 HELP_oneline = f"""{G}Usage{N}:   {NAME} [arg] <target>\nuse '--help' for more info."""
 
