@@ -24,6 +24,7 @@ Network Enumerating toolkid for subdomain enumeration
            ~$ sudo apt install python
            or
            ~# apt install python
+           ~$ cat req.txt | xargs pip3 install
 
 
 # Run
@@ -64,7 +65,7 @@ Network Enumerating toolkid for subdomain enumeration
                           n3tool --sub-domain --wordlist wordlist.txt example.com
 
 
-
+* for <a href="https://red5cracker.wordpress.com/contact/">more</a>info
 
 <img src=".img/ipv4.png">
 

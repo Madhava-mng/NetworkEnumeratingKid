@@ -489,7 +489,7 @@ sub-domain Enumeration:
 {W}{U}Author{N}: Madhava     {W}@{N}RED-5-CRACKERS    {W}@{N}Black-widow-z
 {W}{U}Issues{N}: https://github.com/Madhava-mng/NetworkEnumeratingKid/issues
 {W}{U}Contact{N}: https://t.me/BlackWidowzIntrR5c
-If you have any issues Please repote at {W}https://red5cracker.wordpress.com/contact/{N}
+If you have any issues Please report at {W}https://red5cracker.wordpress.com/contact/{N}
 ----------------------------------------------------------------------------------------
 """
 HELP_oneline = f"""{G}Usage{N}:   {NAME} [arg] <target>\nuse '--help' for more info."""
