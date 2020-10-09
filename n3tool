@@ -3,6 +3,7 @@
 
 from threading import Thread
 from sys import argv
+from wordlist import *
 import time
 import os
 import threading
@@ -40,417 +41,6 @@ W="\u001b[1m"
 S="\u001b[36m"
 U="\u001b[4m"
 
-# Wordlists  (common)
-wordlist = [
-        "contact",
-        "help",
-        "support",
-        "contacts",
-        "fundingchoicesmessages",
-        "alt3.aspmx.l",
-        "stun.l",
-        "cloud",
-        "appengine",
-        "adssettings",
-        "alt7-mtalk",
-        "toolbarqueries",
-        "contacts",
-        "clients1",
-        "alt2-mtalk",
-        "console.cloud",
-        "aa",
-        "play",
-        "android-safebrowsing",
-        "alt6-mtalk",
-        "people-pa.clients6",
-        "hangouts",
-        "shopping",
-        "whois",
-        "addons-pa.clients6",
-        "clients3",
-        "policies",
-        "mail",
-        "alkalicore-pa.clients6",
-        "drive",
-        "pay",
-        "18.client-channel",
-        "dns",
-        "m",
-        "clients6",
-        "ogs",
-        "get",
-        "aspmx.l",
-        "fonts",
-        "clients4",
-        "trends",
-        "apis",
-        "20.client-channel",
-        "feedproxy",
-        "alt2.aspmx.l",
-        "alt7.mobile-gtalk.l",
-        "gg",
-        "11.client-channel",
-        "feedburner",
-        "time1",
-        "time",
-        "adservice",
-        "images",
-        "khms3",
-        "id",
-        "assignments",
-        "search",
-        "plus",
-        "lh3",
-        "picasaweb",
-        "translate",
-        "28.client-channel",
-        "design",
-        "safebrowsing",
-        "cse",
-        "6.client-channel",
-        "alt4.aspmx.l",
-        "14.client-channel",
-        "photos",
-        "encrypted",
-        "cello.client-channel",
-        "alt1-mtalk",
-        "dl",
-        "chat-pa.clients6",
-        "clients5",
-        "suggestqueries",
-        "fcmatch",
-        "0.client-channel",
-        "sandbox",
-        "goto",
-        "blobcomments-pa.clients6",
-        "alt1.aspmx.l",
-        "assistant",
-        "signaler-pa.clients6",
-        "chrome",
-        "alt3-mtalk",
-        "consent",
-        "7.client-channel",
-        "history",
-        "myaccount",
-        "mail-ads",
-        "merchants",
-        "clients2",
-        "clients2",
-        "mtalk",
-        "accounts",
-        "mts0",
-        "time4",
-        "scholar",
-        "docs",
-        "android.clients",
-        "artsandculture",
-        "hangouts.clients6"
-        ]
-wordlist_dir = [
-        ".ssh",
-        "bin",
-        "admine",
-        "contact",
-        "contacts",
-        "upload-photo",
-        "upload-video",
-        "uploaded_img_x",
-        "uploads_event",
-        "uploads_forum",
-        "upmenuoptions",
-        "php-inc",
-        "php-sdk",
-        "phpESP",
-        "phpMy",
-        "php_files",
-        "php_test",
-        "phpcache",
-        "phpcaptcha",
-        "phpcart",
-        "phpcode",
-        "phpdoc",
-        "phpedit",
-        "phpformgen",
-        "phpids",
-        "phpinclude",
-        "phpjobscheduler",
-        "phpld",
-        "phpmychat",
-        "phpmysql",
-        "phpodp",
-        "phprojekt",
-        "phpsecinfo",
-        "phptell",
-        "phpweather",
-        "admin",
-        "administrator",
-        "wp-admin",
-        "admincp",
-        "fileadmin",
-        "phpmyadmin",
-        "administration",
-        "_admin",
-        "siteadmin",
-        "admin_c",
-        "admin2",
-        "webadmin",
-        "myadmin",
-        "vsadmin",
-        "shopadmin",
-        "dbadmin",
-        "phpadmin",
-        "wbsadmin",
-        "e107_admin",
-        "admins",
-        "adminpanel",
-        "administracion",
-        "sohoadmin",
-        "admin1",
-        "sysadmin",
-        "newadmin",
-        "adminsite",
-        "mfr_admin",
-        "admintemplates",
-        "mysqladmin",
-        "administracja",
-        "cmsadmin",
-        "site_admin",
-        "storeadmin",
-        "superadmin",
-        "backadmin",
-        "sqladmin",
-        "tiki-admin",
-        "administrador",
-        "admintools",
-        "useradmin",
-        "sadmin",
-        "admin_area",
-        "admini",
-        "admin3",
-        "helpadmin",
-        "adminarea",
-        "epsadmin",
-        "cadmin",
-        "admin_new",
-        "admina",
-        "adminm",
-        "adminpages",
-        "uploads_admin",
-        "acs-admin",
-        "admin_",
-        "admin_old",
-        "adminlogin",
-        "adminv2",
-        "admin_images",
-        "administrators",
-        "mliveadmin",
-        "newsadmin",
-        "rap_admin",
-        "xadmin",
-        "adminka",
-        "blogadmin",
-        "oneadmin",
-        "phpldapadmin",
-        "phpmyadmin2",
-        "radmin",
-        "_admin_",
-        "adminonline",
-        "admintool",
-        "adminweb",
-        "bvadmin",
-        "cowadmin",
-        "linkadmin",
-        "vadmin",
-        "wbadmin",
-        "web_admin",
-        "xcache-admin",
-        "zadmin",
-        "admin_login",
-        "admin_tools",
-        "administrare",
-        "adminx",
-        "ccadmin",
-        "cjadmin",
-        "iadmin",
-        "postfixadmin",
-        "site-admin",
-        "admin-login",
-        "admin_test",
-        "adminonly",
-        "bmadmin",
-        "clientadmin",
-        "cms_admin",
-        "kadmin",
-        "newsletteradmin",
-        "padmin",
-        "wsadmin",
-        "_phpmyadmin",
-        "_vti_admin",
-        "actions_admin",
-        "admin2009",
-        "admin_files",
-        "admin_menu",
-        "adminis",
-        "adminold",
-        "dadmin",
-        "bb-admin",
-        "iredadmin",
-        "metaadmin",
-        "my_admin",
-        "myphpadmin",
-        "new_admin",
-        "pb-admin",
-        "portaladmin",
-        "qmailadmin",
-        "admin12",
-        "admin123",
-        "admin_cms",
-        "admin_cp",
-        "admin_custom",
-        "admin_media",
-        "admin_navigation",
-        "admin_panel",
-        "administratie",
-        "adminz",
-        "badmin",
-        "banneradmin",
-        "cpadmin",
-        "e-admin",
-        "fzadmin",
-        "modules_admin",
-        "nadmin",
-        "viatoradmin",
-        "secureadmin",
-        "web-admin",
-        "__admin",
-        "_administration",
-        "_dbadmin",
-        "admin-old",
-        "admin-panel",
-        "admin00",
-        "admin_common",
-        "admin_news",
-        "admin_scripts",
-        "admin_site",
-        "admin_user",
-        "admincenter",
-        "admincms",
-        "adminfiles",
-        "administer",
-        "administracao",
-        "administrace",
-        "administrasjon",
-        "administrative",
-        "adminmaster",
-        "adminn",
-        "appadmin",
-        "aspnet_webadmin",
-        "authadmin",
-        "contentadmin",
-        "db_admin",
-        "diradmin",
-        "htadmin",
-        "iisadmin",
-        "my-admin",
-        "pbmadmin",
-        "phpmyadmin3",
-        "pmadmin",
-        "sspadmin",
-        "sswadmin",
-        "surveyadmin",
-        "systemadmin",
-        "uadmin",
-        "wadmin",
-        "wp_admin",
-        "yahoo_site_admin",
-        "~admin",
-        "Webadmin",
-        "_siteadmin",
-        "adadmin",
-        "admin4",
-        "admin888",
-        "admin_101",
-        "admin_templates",
-        "admin_tool",
-        "admin_users",
-        "admin_web",
-        "adminbereich",
-        "admincpanel",
-        "admindemo",
-        "adminer",
-        "adminforum",
-        "administra",
-        "administracija",
-        "adminlinks",
-        "adminnorthface",
-        "adminpp",
-        "adminstaff",
-        "adminuser",
-        "adminzone",
-        "app_admin",
-        "cgi-admin",
-        "cimjobpostadmin",
-        "client_admin",
-        "cms-admin",
-        "comadmin",
-        "cs-admin",
-        "db-admin",
-        "doadmin",
-        "enteradmin",
-        "formsadmin",
-        "images_admin",
-        "ladmin",
-        "mailadmin",
-        "mainadmin",
-        "masteradmin",
-        "mh_admin",
-        "mysql-admin",
-        "mysql_admin",
-        "pgadmin",
-        "content_admin",
-        "seoadmin",
-        "shop_admin",
-        "pcadmin",
-        "tttadmin",
-        "sign_out",
-        "sign_up",
-        "signage",
-        "signon",
-        "urdu",
-        "urology",
-        "urp",
-        "urs",
-        "urun",
-        "uscan",
-        "used-inventory",
-        "usedcars",
-        "user-account",
-        "user-controls",
-        "userAdmin",
-        "userControl",
-        "userImages",
-        "userLogin",
-        "user_admin",
-        "user_content",
-        "user_info",
-        "user_media",
-        "user_profile",
-        "userarea",
-        "usercontent",
-        "userimg",
-        "userinterface",
-        "userlist",
-        "userlogin",
-        "userphotos",
-        "contact_request",
-        "flair",
-        "recover_password",
-        "users_files",
-        "usersonline",
-        "userspace",
-
-        ]
-
 
 
 # Help statement
@@ -475,7 +65,7 @@ HELP=f"""{W}{U}N3tool{N} (Network Enumetaing Toolkid)
                                {S}{NAME} --dirs --time 0.5 https://demo.com{N}
                                pause the scanning for every 1/2 second
       --no-color               Ignore colors
-      --quiet                  Start without banner, and don't show status.
+ -q   --quiet                  Start without banner, and don't show status.
  
 
 {W}{U}Examples{N}: 
@@ -510,7 +100,7 @@ arg_list =[
         '-o', '--output',
         '-t', '--time',
               '--no-color',
-              '--quiet'
+        '-q', '--quiet'
         ]
 tmp_list.append(argv[0])
 for i in range(len(argv)):
@@ -577,7 +167,7 @@ for i in range(len(argv)):
             elif argv[i] in ('--no-color'):
                 No_color = True
                 tmp_list.append(argv[i])
-            elif argv[i] in ('--quiet'):
+            elif argv[i] in ('--quiet', '-q'):
                 Quiet = True
                 tmp_list.append(argv[i])
         else:
@@ -666,7 +256,7 @@ def _url_checker(Itered_url,
                 else:
                     C="\u001b[31;1m"
             width=int(os.get_terminal_size()[0])+26
-            a =f"[{P}{time.strftime(f'%H:%M:%S')}{N}][{C}{contant_.status_code}{N}]  {G}{Itered_url:<{Len_}}{N} | {S}{contant_.headers['Server'].strip()}{N}"
+            a =f"[{P}{time.strftime(f'%H:%M:%S')}{N}][{C}{contant_.status_code}{N}]  {G}{Itered_url:<{Len_}}{N} ==> {S}{contant_.headers['Server'].strip()}{N}"
             if Quiet:
                 print(f"{G}{Itered_url}{N}")
             else:
@@ -691,6 +281,7 @@ def _sub_domain(
     ids = []
     a=""
     LEN = 0
+    _Dict_=[]
     if URL[-1] == "/":
         URL = URL[:len(URL)-1]
     try:
@@ -708,11 +299,11 @@ def _sub_domain(
         for i in _Dict_:
             if len(i) > LEN:
                 LEN=len(i)
-        print(f"\t{'-'*47}")
+        print(f"{'-'*47}")
         for i in _Dict_:
             if i not in Ignor_header():
-                print(f"\t{W}{i:{LEN}} :{N} {_Dict_[i]}")
-        print(f"\t{'-'*47}\n\n")
+                print(f"{W}{i:{LEN}} :{N} {_Dict_[i]}")
+        print(f"{'-'*47}\n")
     
     for i in range(len(URL)):
         if URL[i] == "/":
@@ -779,6 +370,10 @@ def _checking_for_uri(
         a = requests.head(URL)
         Code = a.status_code
         Size = a.headers.get("Content-Length")
+        if int(Size) > 1024*1024:
+            Size=str(Size/1024)+"M"
+        elif int(Size) > 1024:
+            Size=str(Size/1024)+"K"
         if Code != 404:
             if Size == None:
                 Size='None'
@@ -786,6 +381,8 @@ def _checking_for_uri(
                 C=f'{W}{G}'
             elif Code < 400:
                 C=f'{W}{B}'
+                if  str(Code)[0] == "3":
+                    URL+="/"
             else:
                 C=f'{W}{R}'
             if Out_put:
@@ -797,7 +394,7 @@ def _checking_for_uri(
                 print(f"{G}{URL}{N}")
             else:
                 width=int(os.get_terminal_size()[0])+35
-                A = f"[{P}{time.strftime(f'%H:%M:%S')}{N}][{C}{Code}{N}][{B}Size{N}: {Size:<9}]: {G}{URL}{N}"
+                A = f"[{P}{time.strftime(f'%H:%M:%S')}{N}][{C}{Code}{N}] {B}Size{N}: {Size} ==> {G}{URL}{N}"
                 if No_color:
                     print(f"{A:<{width}} ")
                 else:
@@ -825,15 +422,15 @@ def _dir_(
         if Quiet:
             pass
         else:
-            print(f"{dir_enum_banner}\r",end='')
+            print(f"{dir_enum_banner}\r", end='')
             for i in _Dict_:
                 if len(i) > LEN:
                     LEN=len(i)
-            print(f"\t{'-'*47}")
+            print(f"{'-'*47}")
             for i in _Dict_:
                 if i not in Ignor_header():
-                    print(f"\t{W}{i:{LEN}} :{N} {_Dict_[i]}")
-            print(f"\t{'-'*47}\n\n")
+                    print(f"{W}{i:{LEN}} :{N} {_Dict_[i]}")
+            print(f"{'-'*47}\n")
         a.close()
     except:
         print(f"[{R}Error{N}][UrlNotFound][ {G}Reason{N}: Unable to ping {Y}{URL}{N} ]")
@@ -1009,30 +606,30 @@ if No_color:
             "\u001b[0m")
 
 # Banners
-if Quiet:
-    dir_enum_banner = ''
-else:
-    dir_enum_banner = ("\n"*(os.get_terminal_size()[1]-7))+"""
-     888 d8b          .d8888b.
-     888 Y8P         d88P  Y88b
-     888                  .d88P
- .d88888 888 888d888     8888"  88888b.  888  888 88888b.d88b.
-d88" 888 888 888P"        "Y8b. 888 "88b 888  888 888 "888 "88b
-888  888 888 888     888    888 888  888 888  888 888  888  888
-Y88b 888 888 888     Y88b  d88P 888  888 Y88b 888 888  888  888
- "Y88888 888 888      "Y8888P"  888  888  "Y88888 888  888  888"""
-if Quiet:
-    sub_enum_banner = ''
-else:
-    sub_enum_banner = ("\n"*(os.get_terminal_size()[1]-10))+"""
-888888888  8888888b.       .d8888b.
-888        888  "Y88b     d88P  Y88b
-888        888    888          .d88P
-8888888b.  888    888         8888"  88888b.  888  888 88888b.d88b.
-     "Y88b 888    888          "Y8b. 888 "88b 888  888 888 "888 "88b
-       888 888    888     888    888 888  888 888  888 888  888  888
-Y88b  d88P 888  .d88P     Y88b  d88P 888  888 Y88b 888 888  888  888
- "Y8888P"  8888888P"       "Y8888P"  888  888  "Y88888 888  888  888"""
+#   if Quiet:
+dir_enum_banner = ''
+#   else:
+#       dir_enum_banner = ("\n"*(os.get_terminal_size()[1]-7))+"""
+#        888 d8b          .d8888b.
+#        888 Y8P         d88P  Y88b
+#        888                  .d88P
+#    .d88888 888 888d888     8888"  88888b.  888  888 88888b.d88b.
+#   d88" 888 888 888P"        "Y8b. 888 "88b 888  888 888 "888 "88b
+#   888  888 888 888     888    888 888  888 888  888 888  888  888
+#   Y88b 888 888 888     Y88b  d88P 888  888 Y88b 888 888  888  888
+#    "Y88888 888 888      "Y8888P"  888  888  "Y88888 888  888  888"""
+#   if Quiet:
+sub_enum_banner = ''
+#   else:
+#       sub_enum_banner = ("\n"*(os.get_terminal_size()[1]-10))+"""
+#   888888888  8888888b.       .d8888b.
+#   888        888  "Y88b     d88P  Y88b
+#   888        888    888          .d88P
+#   8888888b.  888    888         8888"  88888b.  888  888 88888b.d88b.
+#        "Y88b 888    888          "Y8b. 888 "88b 888  888 888 "888 "88b
+#          888 888    888     888    888 888  888 888  888 888  888  888
+#   Y88b  d88P 888  .d88P     Y88b  d88P 888  888 Y88b 888 888  888  888
+#    "Y8888P"  8888888P"       "Y8888P"  888  888  "Y88888 888  888  888"""
 
 
 
